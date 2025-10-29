@@ -24,7 +24,6 @@
 
 template<typename T, typename MergeFunc>
 class SegmentTree {
-private:
     int size;
     std::vector<T> *tree;
     MergeFunc merge;
@@ -74,6 +73,21 @@ public:
     void print() {
         for (int i = 0; i < this->originalSize * 2; ++i)
             std::cout << this->tree->at(i) << " ";
+        std::cout << std::endl;
+    }
+
+    void update(int index, int value) {
+        index += this->size / 2;
+        this->tree->at(index) = value;
+
+        while (index) {
+            int parentIndex = parent(index);
+            T newParentValue = this->merge(this->tree->at(leftChild(parentIndex)), this->tree->at(rightChild(parentIndex)));
+            if (newParentValue == this->tree->at(parentIndex))
+                return;
+            this->tree->at(parentIndex) = newParentValue;
+            index = parentIndex;
+        }
     }
 
 };
