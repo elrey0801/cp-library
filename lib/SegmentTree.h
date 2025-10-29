@@ -1,0 +1,79 @@
+//
+// Created by Admin on 29/10/2025.
+//
+
+#ifndef SEGMENTTREE_H
+#define SEGMENTTREE_H
+#include <cmath>
+#include <iostream>
+
+#endif //SEGMENTTREE_H
+
+#include <vector>
+
+/*
+    Construct a simple Segment Tree given a merge function and the emptySlotValue:
+    For example:
+    Constructing a min Segment Tree:
+
+    int getMix(int a, int b) {
+        return a < b ? a : b;
+    }
+    SegmentTree<int, int(*)(int, int)> segment_tree(n, arr, INT_MAX, getMix);
+*/
+
+template<typename T, typename MergeFunc>
+class SegmentTree {
+private:
+    int size;
+    std::vector<T> *tree;
+    MergeFunc merge;
+    int originalSize;
+
+public:
+    SegmentTree(int n, T *data, T emptySlotValue, MergeFunc merge) {
+        this->originalSize = n;
+        int logSize = static_cast<int>(std::log2(n));
+        if (pow(2, logSize) == n)
+            this->size = 2 * n - 1;
+        else
+            this->size = static_cast<int>(pow(2, logSize + 2)) - 1;
+
+        this->merge = merge;
+        this->tree = new std::vector<T>(this->size, emptySlotValue);
+
+        // first segment
+        for (int i = 0; i < n; ++i)
+            this->tree->at(i + this->size / 2) = data[i];
+
+        // for remaining segments
+        int segmentIndex = this->size / 4;
+        while (segmentIndex) {
+            for (int i = segmentIndex; i <= segmentIndex * 2; ++i) {
+                // T leftChild = leftChild(i), rightChild = rightChild(i);
+                this->tree->at(i) = this->merge(this->tree->at(leftChild(i)), this->tree->at(rightChild(i)));
+            }
+            segmentIndex /= 2;
+        }
+        this->tree->at(0) = this->merge(this->tree->at(1), this->tree->at(2));
+    }
+
+    ~SegmentTree() {
+        delete this->tree;
+    }
+
+    static T parent(int index) {
+        return (index - 1) / 2;
+    }
+    static T leftChild(int index) {
+        return 2 * index + 1;
+    }
+    static T rightChild(int index) {
+        return 2 * index + 2;
+    }
+    void print() {
+        for (int i = 0; i < this->originalSize * 2; ++i)
+            std::cout << this->tree->at(i) << " ";
+    }
+
+};
