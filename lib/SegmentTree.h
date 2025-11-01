@@ -10,6 +10,7 @@
 #endif //SEGMENTTREE_H
 
 #include <vector>
+#include <utility>
 
 /*
     Construct a simple Segment Tree given a merge function and the emptySlotValue:
@@ -28,10 +29,12 @@ class SegmentTree {
     std::vector<T> *tree;
     MergeFunc merge;
     int originalSize;
+    T emptySlotValue;
 
 public:
     SegmentTree(int n, T *data, T emptySlotValue, MergeFunc merge) {
         this->originalSize = n;
+        this->emptySlotValue = emptySlotValue;
         int logSize = static_cast<int>(std::log2(n));
         if (pow(2, logSize) == n)
             this->size = 2 * n - 1;
@@ -89,5 +92,28 @@ public:
             index = parentIndex;
         }
     }
+    T query(int from, int to) {
+        if (from > to)
+            throw std::runtime_error("From cannot be larger than to");
+        if(from < 0 || to >= this->originalSize)
+            throw std::out_of_range("Out of range query");
 
+        int left = from + this->size / 2;
+        int right = to + this->size / 2;
+        int result = this->emptySlotValue;
+        while (left != right) {
+            if (left % 2 == 0) {
+                result = this->merge(result, this->tree->at(left));
+                left++;
+            }
+            if (right % 2 == 1) {
+                result = this->merge(result, this->tree->at(right));
+                right--;
+            }
+            left = parent(left);
+            right = parent(right);
+        }
+
+        return this->merge(result, this->tree->at(left));
+    }
 };
