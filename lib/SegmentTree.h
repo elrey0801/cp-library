@@ -101,7 +101,7 @@ public:
         int left = from + this->size / 2;
         int right = to + this->size / 2;
         int result = this->emptySlotValue;
-        while (left != right) {
+        while (left < right) {
             if (left % 2 == 0) {
                 result = this->merge(result, this->tree->at(left));
                 left++;
@@ -114,6 +114,6 @@ public:
             right = parent(right);
         }
 
-        return this->merge(result, this->tree->at(left));
+        return left == right ? this->merge(result, this->tree->at(left)) : result;
     }
 };

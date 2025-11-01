@@ -12,6 +12,6 @@ int main() {
     segment_tree.print();
     segment_tree.update(2, 25);
     segment_tree.print();
-    std::cout << segment_tree.query(0, 6);
+    std::cout << segment_tree.query(1, 4);
     return 0;
 }
