@@ -58,21 +58,25 @@ public:
             }
             segmentIndex /= 2;
         }
-        this->tree->at(0) = this->merge(this->tree->at(1), this->tree->at(2));
+        if (this->size > 1)
+            this->tree->at(0) = this->merge(this->tree->at(1), this->tree->at(2));
     }
 
     ~SegmentTree() {
         delete this->tree;
     }
 
-    static T parent(int index) {
+    static int parent(int index) {
         return (index - 1) / 2;
     }
-    static T leftChild(int index) {
+    static int leftChild(int index) {
         return 2 * index + 1;
     }
-    static T rightChild(int index) {
+    static int rightChild(int index) {
         return 2 * index + 2;
+    }
+    T getElement(int index) {
+        return this->tree->at(index + this->size / 2);
     }
     void print() {
         for (int i = 0; i < this->originalSize * 2; ++i)
@@ -80,7 +84,7 @@ public:
         std::cout << std::endl;
     }
 
-    void update(int index, int value) {
+    void update(int index, T value) {
         index += this->size / 2;
         this->tree->at(index) = value;
 
@@ -101,7 +105,7 @@ public:
 
         int left = from + this->size / 2;
         int right = to + this->size / 2;
-        int result = this->emptySlotValue;
+        T result = this->emptySlotValue;
         while (left < right) {
             if (left % 2 == 0) {
                 result = this->merge(result, this->tree->at(left));
