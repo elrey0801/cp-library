@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <utility>
+#include <cmath>
 
 /*
     Construct a simple Segment Tree given a merge function and the emptySlotValue:
@@ -32,10 +33,10 @@ class SegmentTree {
     T emptySlotValue;
 
 public:
-    SegmentTree(int n, T *data, T emptySlotValue, MergeFunc merge) {
+    SegmentTree(int n, std::vector<T> data, T emptySlotValue, MergeFunc merge) {
         this->originalSize = n;
         this->emptySlotValue = emptySlotValue;
-        int logSize = static_cast<int>(std::log2(n));
+        int logSize = static_cast<int>(log2(n));
         if (pow(2, logSize) == n)
             this->size = 2 * n - 1;
         else
